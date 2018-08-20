@@ -1,0 +1,52 @@
+{#
+/**
+ * Translate plugin for Craft CMS 3.x
+ *
+ * Translation management plugin for Craft CMS
+ *
+ * @link      https://www.statik.be
+ * @copyright Copyright (c) 2017 Statik.be
+ */
+#}
+
+{% extends "_layouts/elementindex" %}
+
+{% set title = "Translate to"|t('translate') %}
+{% set elementType = 'statikbe\\translate\\elements\\Translate' %}
+
+{% do view.registerAssetBundle("statikbe\\translate\\assetbundles\\TranslateAsset") %}
+
+{% block actionButton %}
+    <div class="btngroup">
+        <input id="save-elements-button" type="submit" class="btn submit" value="{{ 'Save'|t('app') }}">
+        {# IF we need a submenu #}
+        <div id="statik-menubtn" class="btn submit menubtn"></div>
+        <div class="menu">
+            <ul>
+                <li>
+                    <a id="donwload-button" class="formsubmit translations-download-button"
+                       data-action="translate/translate/download"
+                       data-siteId="{{ elementInstance.siteId }}">
+                        {{ "Download"|t('translate') }}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <form method="post" id="translate-ajax" accept-charset="utf-8">
+        {{ csrfInput() }}
+        <input type="hidden" name="action" value="translate/translate/save">
+        <input type="hidden" name="siteId" value="{{ elementInstance.siteId }}">
+        
+        {{ parent() }}
+    </form>
+{% endblock %}
+
+{% js %}
+    $(document).ready(function() {
+        new StatikTranslate();
+    });
+{% endjs %}
