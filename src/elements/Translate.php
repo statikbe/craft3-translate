@@ -26,6 +26,7 @@ class Translate extends Element
     /**
      * Status constants.
      */
+    const ALL = 'all';
     const TRANSLATED = 'live';
     const PENDING = 'pending';
 
@@ -171,6 +172,18 @@ class Translate extends Element
         $sources = [];
 
         $sources[] = ['heading' => Craft::t('translate','Template Status')];
+
+        $key = 'status:' . self::ALL;
+        $sources[] = [
+            'status'   => null,
+            'key'      => $key,
+            'label'    => Craft::t('translate', 'All'),
+            'criteria' => [
+                'source' => [
+                    Craft::$app->path->getSiteTemplatesPath()
+                ],
+            ],
+        ];
 
         $key = 'status:' . self::PENDING;
         $sources[] = [
