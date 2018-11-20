@@ -202,6 +202,7 @@ class TranslateController extends BaseController
         Translate::$app->translate->set($site->language, $translations, $translatePath);
 
         // Redirect back to page
+        sleep(2);
         return $this->asJson($response);
     }
 }
