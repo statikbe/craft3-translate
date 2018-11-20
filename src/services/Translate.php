@@ -103,7 +103,7 @@ class Translate extends Component
         // Save code to file
         try {
             FileHelper::writeToFile($file, $php);
-            sleep(2);
+            
         }catch (\Throwable $e) {
             throw new \Exception(Craft::t('translate','Something went wrong while saving your translations: '.$e->getMessage()));
         }
