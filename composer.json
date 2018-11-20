@@ -2,7 +2,7 @@
     "name": "statikbe/craft-translate",
     "description": "Translate static string from the Craft control panel",
     "type": "craft-plugin",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "keywords": [
         "craft",
         "cms",
