@@ -124,6 +124,8 @@ class Translate extends Component
      */
     public function get(ElementQueryInterface $query, $category = 'site')
     {
+        sleep(2);
+        
         if (!is_array($query->source)) {
             $query->source = [$query->source];
         }
