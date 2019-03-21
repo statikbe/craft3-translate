@@ -211,7 +211,6 @@ class Translate extends Element
             ],
         ];
 
-
         // Get template sources
         $templateSources = array();
         $options = [
@@ -273,6 +272,33 @@ class Translate extends Element
                 ]
             ],
             'nested' => $templateSources
+        ];
+
+        $modulesSources = array();
+        $modules = Craft::$app->getModules();
+
+        foreach (array_diff_key($modules, Craft::$app->getPlugins()->getAllPlugins()) as $path => $module) {
+
+            $modulesSources['plugins:'.$path] = [
+                'label' => $module->id,
+                'key' => 'plugins:'.$module->id,
+                'criteria' => [
+                    'pluginHandle' => $module->id,
+                    'source' => [
+                        $module->getBasePath()
+                    ],
+                ],
+            ];
+        }
+
+        $sources[] = [
+            'label'    => Craft::t('translate', 'Modules'),
+            'key' => 'modules',
+            'criteria' => [
+                'source' => [
+                ],
+            ],
+            'nested' => $modulesSources
         ];
 
         // @todo add hook
