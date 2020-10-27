@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2017 Statik.be
  */
 
-namespace statikbe\translate\assetbundles;
+namespace statikbe\translate\assetbundles\translate;
 
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
@@ -18,7 +18,7 @@ class TranslateAsset extends AssetBundle
     public function init()
     {
         // define the path that your publishable resources live
-        $this->sourcePath = '@statikbe/translate/resources/';
+        $this->sourcePath = '@statikbe/translate/assetbundles/translate';
 
         // define the dependencies
         $this->depends = [
