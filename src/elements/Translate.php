@@ -320,7 +320,7 @@ class Translate extends Element
             $elementQuery->status = $elementQuery->translateStatus;
         }
 
-        $elements = TranslatePlugin::$app->translate->get($elementQuery);
+        $elements = TranslatePlugin::getInstance()->translate->get($elementQuery);
 
         $variables = [
             'viewMode' => $viewState['mode'],

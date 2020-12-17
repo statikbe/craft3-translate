@@ -10,22 +10,17 @@
 
 namespace statikbe\translate;
 
-use Craft;
 use craft\base\Plugin;
-use craft\web\twig\variables\CraftVariable;
-use craft\events\DefineComponentsEvent;
-use yii\base\Event;
+use statikbe\translate\services\Translate as TranslateService;
 
 
+/**
+ * Class Translate
+ * @package statikbe\translate
+ * @property TranslateService translate
+ */
 class Translate extends Plugin
 {
-    /**
-     * Enable use of Translate::$app-> in place of Craft::$app->
-     *
-     * @var [type]
-     */
-    public static $app;
-
     public $hasCpSection = true;
 
     public $hasCpSettings = false;
@@ -33,7 +28,10 @@ class Translate extends Plugin
     public function init()
     {
         parent::init();
-        self::$app = $this->get('app');
+
+        $this->setComponents([
+            'translate' => TranslateService::class,
+        ]);
 
     }
 }
