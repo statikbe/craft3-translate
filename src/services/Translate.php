@@ -9,6 +9,8 @@
  */
 
 namespace statikbe\translate\services;
+
+use Craft;
 use craft\base\Component;
 use craft\elements\db\ElementQueryInterface;
 use craft\helpers\ElementHelper;
@@ -17,8 +19,6 @@ use statikbe\translate\contracts\GoogleCloudTranslate;
 use statikbe\translate\contracts\GoogleTranslate;
 use statikbe\translate\contracts\Yandex;
 use statikbe\translate\elements\Translate as TranslateElement;
-use statikbe\translate\Translate as TranslatePlugin;
-use Craft;
 
 class Translate extends Component
 {
@@ -72,7 +72,7 @@ class Translate extends Component
      * Set translations.
      *
      * @param string $locale
-     * @param array  $translations
+     * @param array $translations
      * @param string $translationPath
      *
      * @return bool
@@ -103,9 +103,9 @@ class Translate extends Component
         // Save code to file
         try {
             FileHelper::writeToFile($file, $php);
-            
-        }catch (\Throwable $e) {
-            throw new \Exception(Craft::t('translate','Something went wrong while saving your translations: '.$e->getMessage()));
+
+        } catch (\Throwable $e) {
+            throw new \Exception(Craft::t('translate', 'Something went wrong while saving your translations: ' . $e->getMessage()));
         }
 
         return true;
@@ -116,7 +116,7 @@ class Translate extends Component
      *
      * @param ElementQueryInterface $query
      *
-     * @param string                $category
+     * @param string $category
      *
      * @return array
      * @throws \Twig_Error_Loader
@@ -125,7 +125,7 @@ class Translate extends Component
     public function get(ElementQueryInterface $query, $category = 'site')
     {
         sleep(2);
-        
+
         if (!is_array($query->source)) {
             $query->source = [$query->source];
         }
@@ -140,7 +140,7 @@ class Translate extends Component
             if ($isDir) {
                 $options = [
                     'recursive' => true,
-                    'only' => ['*.php','*.html','*.twig','*.js','*.json','*.atom','*.rss'],
+                    'only' => ['*.php', '*.html', '*.twig', '*.js', '*.json', '*.atom', '*.rss'],
                     'except' => ['vendor/', 'node_modules/']
                 ];
 
@@ -171,10 +171,10 @@ class Translate extends Component
     /**
      * Apply regex search into file
      *
-     * @param string                $path
-     * @param string                $file
+     * @param string $path
+     * @param string $file
      * @param ElementQueryInterface $query
-     * @param string                $category
+     * @param string $category
      *
      * @return array
      * @throws \Twig_Error_Loader
@@ -183,8 +183,8 @@ class Translate extends Component
     private function _processFile($path, $file, ElementQueryInterface $query, $category)
     {
         $translations = array();
-        $contents     = file_get_contents($file);
-        $extension    = pathinfo($file, PATHINFO_EXTENSION);
+        $contents = file_get_contents($file);
+        $extension = pathinfo($file, PATHINFO_EXTENSION);
 
         // Process the file
         foreach ($this->_expressions[$extension] as $regex) {
@@ -192,7 +192,7 @@ class Translate extends Component
             if (preg_match_all($regex, $contents, $matches)) {
                 $pos = 2;
                 // Js and php files goes to 3
-                if ($extension == 'js' || $extension == 'php'){
+                if ($extension == 'js' || $extension == 'php') {
                     $pos = 3;
                 }
                 foreach ($matches[$pos] as $original) {
@@ -205,7 +205,7 @@ class Translate extends Component
 
                     $field = $view->renderTemplate('_includes/forms/text', [
                         'id' => $elementId,
-                        'name' => 'translation['.$original.']',
+                        'name' => 'translation[' . $original . ']',
                         'value' => $translation,
                         'placeholder' => $translation,
                     ]);
@@ -224,21 +224,19 @@ class Translate extends Component
                     // Continue when Searching
                     if ($query->search && !stristr($element->original, $query->search) && !stristr($element->translation, $query->search)) {
                         continue;
-                   }
+                    }
                     // Continue when filter by status
                     if ($query->status && $query->status != $element->getStatus()) {
                         continue;
                     }
                     // add actions occurrences
-                    if ($query->id)
-                    {
+                    if ($query->id) {
                         foreach ($query->id as $id) {
                             if ($element->id == $id) {
                                 $translations[$element->original] = $element;
                             }
                         }
-                    }
-                    else{
+                    } else {
                         $translations[$element->original] = $element;
                     }
                 }
@@ -246,26 +244,6 @@ class Translate extends Component
         }
 
         return $translations;
-    }
-
-    /**
-     * @param      $text
-     * @param      $language
-     * @param null $from
-     *
-     * @return bool|object
-     * @throws \craft\errors\SiteNotFoundException
-     */
-    public function yandexTranslate($text, $language, $from = null)
-    {
-        // @todo - add a setting to select the primary site
-        $primarySite = Craft::$app->getSites()->getPrimarySite();
-        $from = $from ?? $primarySite->language;
-        $language = $this->sanitizeLanguage($from).'-'. $this->sanitizeLanguage($language);
-        $yandex = new Yandex();
-        $result = $yandex->translate($text, $language);
-
-        return $result;
     }
 
     private function sanitizeLanguage($language)
@@ -276,52 +254,14 @@ class Translate extends Component
     }
 
     /**
-     * @param      $text
-     * @param      $language
-     * @param null $from
-     *
-     * @return bool|object
-     * @throws \craft\errors\SiteNotFoundException
-     */
-    public function googleTranslate($text, $language, $from = null)
-    {
-        // @todo - add a setting to select the primary site
-        $primarySite = Craft::$app->getSites()->getPrimarySite();
-        $from = $from ?? $primarySite->language;
-        $googleTranslate = new GoogleTranslate();
-        $result = $googleTranslate->translate($text, $from, $language);
-
-        return $result;
-    }
-
-    /**
-     * @param      $text
-     * @param      $language
-     * @param null $from
-     *
-     * @return bool|object
-     * @throws \craft\errors\SiteNotFoundException
-     */
-    public function googleCloudTranslate($text, $language, $from = null)
-    {
-        // @todo - add a setting to select the primary site
-        $primarySite = Craft::$app->getSites()->getPrimarySite();
-        $from = $from ?? $primarySite->language;
-        $googleTranslate = new GoogleCloudTranslate();
-        $result = $googleTranslate->translate($text, $from, $language);
-
-        return $result;
-    }
-
-    /**
      * @param $total int
      * @return string
      */
     public function getSuccessMessage($total = 0)
     {
-        $message = $total>1 ? 'Translations' : 'Translation';
+        $message = $total > 1 ? 'Translations' : 'Translation';
 
-        return  Craft::t('translate','{total} {message} saved', ['total' => $total, 'message' => $message]);;
+        return Craft::t('translate', '{total} {message} saved', ['total' => $total, 'message' => $message]);;
     }
 
     /**
@@ -333,7 +273,7 @@ class Translate extends Component
     public function getSitePath($locale)
     {
         $sitePath = Craft::$app->getPath()->getSiteTranslationsPath();
-        $file = $sitePath.DIRECTORY_SEPARATOR.$locale.DIRECTORY_SEPARATOR.'site.php';
+        $file = $sitePath . DIRECTORY_SEPARATOR . $locale . DIRECTORY_SEPARATOR . 'site.php';
 
         return $file;
     }
