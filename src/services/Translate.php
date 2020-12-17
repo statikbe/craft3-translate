@@ -26,7 +26,7 @@ class Translate extends Component
      * @credits to boboldehampsink
      * @var []
      */
-    private $_expressions = array(
+    public $_expressions = array(
         // Regex for Craft::t('category', '..')
         'php' => array(
             // Single quotes
@@ -38,9 +38,9 @@ class Translate extends Component
         // Regex for |t('category')
         'twig' => array(
             // Single quotes
-            '/(\{\{\s*|\{\%.*?|:\s*)\'(.*?)\'.*?\|.*?(t|translate)(\(.*?\)|).*?(\}\}|\%\}|,)/',
+            '/(\{\{\s*|\{\%.*?|:\s*)\'(.*?)\'.*?\|(t|translate)(\(.*?\)|).*?(\}\}|\%\}|,)/us',
             // Double quotes
-            '/(\{\{\s*|\{\%.*?|:\s*)"(.*?)".*?\|.*?(t|translate)(\(.*?\)|).*?(\}\}|\%\}|,)/',
+            '/(\{\{\s*|\{\%.*?|:\s*)"(.*?)".*?\|(t|translate)(\(.*?\)|).*?(\}\}|\%\}|,)/us',
         ),
 
         // Regex for Craft.t('category', '..')

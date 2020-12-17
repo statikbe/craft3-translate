@@ -23,4 +23,21 @@ use Codeception\Lib\Friend;
 class UnitTester extends Actor
 {
     use _generated\UnitTesterActions;
+
+    public function parseRegex($expressions, $string, $pos = 2)
+    {
+        foreach ($expressions as $regex) {
+            preg_match_all($regex, $string, $matches);
+            if (!$matches) {
+                return false;
+            }
+            if (array_filter($matches)) {
+                foreach ($matches[$pos] as $original) {
+                    $str = $original;
+                }
+                return $str;
+            }
+        }
+        return false;
+    }
 }
