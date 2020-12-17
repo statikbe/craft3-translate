@@ -78,7 +78,7 @@ class TranslateController extends BaseController
         $query->source = $sources;
 
         // Get occurences
-        $occurences = Translate::$app->translate->get($query);
+        $occurences = Translate::getInstance()->translate->get($query);
 
         // Re-order data
         $data = StringHelper::convertToUTF8('"'.Craft::t('translate','Source {language}',['language'=> $site->language]).'","'.Craft::t('translate','Translation')."\"\r\n");
@@ -199,7 +199,7 @@ class TranslateController extends BaseController
         $translations = Craft::$app->request->getRequiredBodyParam('translation');
 
         // Save to translation file
-        Translate::$app->translate->set($site->language, $translations, $translatePath);
+        Translate::getInstance()->translate->set($site->language, $translations, $translatePath);
 
         // Redirect back to page
         return $this->asJson($response);

@@ -15,10 +15,9 @@ use craft\base\Component;
 use craft\elements\db\ElementQueryInterface;
 use craft\helpers\ElementHelper;
 use craft\helpers\FileHelper;
-use statikbe\translate\contracts\GoogleCloudTranslate;
-use statikbe\translate\contracts\GoogleTranslate;
-use statikbe\translate\contracts\Yandex;
+use Exception;
 use statikbe\translate\elements\Translate as TranslateElement;
+use Throwable;
 
 class Translate extends Component
 {
@@ -104,8 +103,8 @@ class Translate extends Component
         try {
             FileHelper::writeToFile($file, $php);
 
-        } catch (\Throwable $e) {
-            throw new \Exception(Craft::t('translate', 'Something went wrong while saving your translations: ' . $e->getMessage()));
+        } catch (Throwable $e) {
+            throw new Exception(Craft::t('translate', 'Something went wrong while saving your translations: ' . $e->getMessage()));
         }
 
         return true;
@@ -192,7 +191,7 @@ class Translate extends Component
             if (preg_match_all($regex, $contents, $matches)) {
                 $pos = 2;
                 // Js and php files goes to 3
-                if ($extension == 'js' || $extension == 'php') {
+                if ($extension === 'js' || $extension === 'php') {
                     $pos = 3;
                 }
                 foreach ($matches[$pos] as $original) {
@@ -246,24 +245,6 @@ class Translate extends Component
         return $translations;
     }
 
-    private function sanitizeLanguage($language)
-    {
-        $lang = explode('-', $language);
-
-        return isset($lang[0]) ? $lang[0] : $language;
-    }
-
-    /**
-     * @param $total int
-     * @return string
-     */
-    public function getSuccessMessage($total = 0)
-    {
-        $message = $total > 1 ? 'Translations' : 'Translation';
-
-        return Craft::t('translate', '{total} {message} saved', ['total' => $total, 'message' => $message]);;
-    }
-
     /**
      * @param $locale
      *
@@ -273,9 +254,7 @@ class Translate extends Component
     public function getSitePath($locale)
     {
         $sitePath = Craft::$app->getPath()->getSiteTranslationsPath();
-        $file = $sitePath . DIRECTORY_SEPARATOR . $locale . DIRECTORY_SEPARATOR . 'site.php';
-
-        return $file;
+        return $sitePath . DIRECTORY_SEPARATOR . $locale . DIRECTORY_SEPARATOR . 'site.php';
     }
 
 }
