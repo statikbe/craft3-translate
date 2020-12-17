@@ -8,11 +8,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@master
+    - uses: nanasess/setup-php@master
+      with:
+        php-version: '7.4'
 
     - name: Install dependencies
-      run:  composer install 
-      
-     
+      run:  composer install
+
     - name: Run test cases
       run:  php vendor/bin/codecept run unit
