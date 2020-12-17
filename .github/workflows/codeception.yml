@@ -12,14 +12,6 @@ jobs:
     - uses: nanasess/setup-php@master
       with:
         php-version: '7.4'
-    - name: Make envfile
-      uses: SpicyPizza/create-envfile@v1
-      with:
-        envkey_DB_DSN: "mysql:host=127.0.0.1;port=3306;dbname=craft-test"
-        envkey_DB_USER: "root"
-        envkey_DB_PASSWORD: "root"
-        directory: tests
-        file_name: .env
 
     - name: Install dependencies
       run:  composer install
