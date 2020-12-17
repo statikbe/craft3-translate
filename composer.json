@@ -39,5 +39,11 @@
         "components": {
             "app": "statikbe\\translate\\services\\App"
         }
+    },
+    "require-dev": {
+        "codeception/codeception": "^4.0.0",
+        "vlucas/phpdotenv": "^3.0",
+        "codeception/module-yii2": "^1.0.0",
+        "codeception/module-asserts": "^1.0.0"
     }
 }
