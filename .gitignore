@@ -2,3 +2,4 @@ vendor
 .idea
 .DS
 tests/.env
+cpresources
