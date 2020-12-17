@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - run: |
+      sudo /etc/init.d/mysql start
     - uses: actions/checkout@master
     - uses: nanasess/setup-php@master
       with:
