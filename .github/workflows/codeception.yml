@@ -1,4 +1,4 @@
-name: Run Codeception unit tests
+name: Codeception
 
 on: [push]
 

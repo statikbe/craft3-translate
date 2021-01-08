@@ -2,6 +2,8 @@
 
 Translate static string from the Craft control panel
 
+![Codeception](https://github.com/statikbe/craft3-translate/workflows/Run%20Codeception%20unit%20tests/badge.svg)
+
 ## Requirements
 
 This plugin requires Craft CMS 3.0.0 or later.
