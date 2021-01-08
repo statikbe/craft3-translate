@@ -188,7 +188,8 @@ class Translate extends Component
         // Process the file
         foreach ($this->_expressions[$extension] as $regex) {
             // Do it!
-            if (preg_match_all($regex, $contents, $matches)) {
+            $matches = $this->parseString($regex, $contents);
+            if ($matches) {
                 $pos = 2;
                 // Js and php files goes to 3
                 if ($extension === 'js' || $extension === 'php') {
@@ -243,6 +244,16 @@ class Translate extends Component
         }
 
         return $translations;
+    }
+
+    public function parseString($expression, $string)
+    {
+
+        //$string = nl2br($string);
+        $string = preg_replace("/\r?\n|\r|\n/", "",$string);
+        $string = preg_replace('!\s+!', ' ', $string);
+        preg_match_all($expression, $string, $matches);
+        return $matches;
     }
 
     /**

@@ -26,8 +26,9 @@ class UnitTester extends Actor
 
     public function parseRegex($expressions, $string, $pos = 2)
     {
+        $translator = new \statikbe\translate\services\Translate();
         foreach ($expressions as $regex) {
-            preg_match_all($regex, $string, $matches);
+            $matches = $translator->parseString($regex, $string);
             if (!$matches) {
                 return false;
             }

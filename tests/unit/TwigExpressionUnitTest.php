@@ -63,10 +63,15 @@ class TwigExpressionUnitTest extends Unit
 
     public function testStringWithReturns()
     {
-        $string = '{{ "hi
-           er"|t }}';
+        $string = '{{ "Gebruik van pesticiden of andere producten (bvb slakkenkorrels) 
+                        tegen ongedierte? (bladluizen, ratten, slakken, mieren, engerlingen, ...)"|t }}';
         $str = $this->tester->parseRegex($this->expressions, $string);
-        self::assertEquals('hier', $str);
+        self::assertEquals("Gebruik van pesticiden of andere producten (bvb slakkenkorrels) tegen ongedierte? (bladluizen, ratten, slakken, mieren, engerlingen, ...)", $str);
+
+        $string = '{{  "craft  
+            cms"|t }}';
+        $str = $this->tester->parseRegex($this->expressions, $string);
+        self::assertEquals('craft cms', $str);
     }
 
 }
