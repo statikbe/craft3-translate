@@ -39,9 +39,8 @@
             });
 
             // Init the form
-            if(Craft.getLocalStorage('BaseElementIndex.siteId')) {
-                $siteIdInput.val(Craft.getLocalStorage('BaseElementIndex.siteId'));
-            }
+            let siteId = this.getSiteId();
+            $siteIdInput.val(siteId);
 
             // Change the siteId when on hidden values
             $siteMenu.on('optionselect', function(ev) {
@@ -50,6 +49,17 @@
 
             Craft.elementIndex.on('afterAction', this.manageAfterAction);
             this.$menu.on('optionSelect', this.manageMenu)
+        },
+
+        getSiteId: function() {
+            // If the old BaseElementIndex.siteId value is in localStorage, go aheand and remove & return that
+            let siteId = Craft.getLocalStorage('BaseElementIndex.siteId');
+            if (typeof siteId !== 'undefined') {
+                Craft.removeLocalStorage('BaseElementIndex.siteId');
+                this.setSiteId(siteId);
+                return siteId;
+            }
+            return Craft.getCookie('siteId');
         },
 
         manageMenu: function(event)

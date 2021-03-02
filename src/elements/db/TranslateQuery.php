@@ -11,7 +11,6 @@
 namespace statikbe\translate\elements\db;
 
 use craft\elements\db\ElementQuery;
-use craft\helpers\Db;
 
 class TranslateQuery extends ElementQuery
 {

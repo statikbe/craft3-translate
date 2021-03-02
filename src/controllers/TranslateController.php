@@ -11,14 +11,14 @@
 
 namespace statikbe\translate\controllers;
 
+use Craft;
 use craft\helpers\FileHelper;
 use craft\helpers\Path;
 use craft\helpers\StringHelper;
 use craft\web\Controller as BaseController;
-use Craft;
 use craft\web\Response;
-use statikbe\translate\Translate;
 use statikbe\translate\elements\Translate as ElementTranslate;
+use statikbe\translate\Translate;
 use yii\web\NotFoundHttpException;
 
 class TranslateController extends BaseController
@@ -78,7 +78,7 @@ class TranslateController extends BaseController
         $query->source = $sources;
 
         // Get occurences
-        $occurences = Translate::$app->translate->get($query);
+        $occurences = Translate::getInstance()->translate->get($query);
 
         // Re-order data
         $data = StringHelper::convertToUTF8('"'.Craft::t('translate','Source {language}',['language'=> $site->language]).'","'.Craft::t('translate','Translation')."\"\r\n");
@@ -117,7 +117,6 @@ class TranslateController extends BaseController
      * Returns Translate csv file
      *
      * @return Response
-     * @throws ForbiddenHttpException if the user doesn't have access to the DB Paypal utility
      * @throws NotFoundHttpException if the requested backup cannot be found
      * @throws \yii\web\BadRequestHttpException
      */
@@ -133,44 +132,10 @@ class TranslateController extends BaseController
     }
 
     /**
-     * Upload translations.
-     */
-    public function actionUpload()
-    {
-        // Get params
-        $locale = Craft::$app->request->getRequiredPost('locale');
-
-        // Get file
-        $file = \CUploadedFile::getInstanceByName('translations-upload');
-
-        // Get filepath
-        $path = Craft::$app->path->getTempUploadsPath().$file->getName();
-
-        // Save file to Craft's temp folder
-        $file->saveAs($path);
-
-        // Open file and parse csv rows
-        $translations = array();
-        $handle = fopen($path, 'r');
-        while (($row = fgetcsv($handle)) !== false) {
-            $translations[$row[0]] = $row[1];
-        }
-        fclose($handle);
-
-        // Save
-        Craft::$app->translate->set($locale, $translations);
-
-        // Set a flash message
-        Craft::$app->getSession()->setNotice(Craft::t('translate','The translations have been updated.'));
-
-        // Redirect back to page
-        $this->redirectToPostedUrl();
-    }
-
-    /**
      * Save translations.
      *
      * @throws \yii\web\BadRequestHttpException
+     * @return String
      */
     public function actionSave()
     {
@@ -199,7 +164,7 @@ class TranslateController extends BaseController
         $translations = Craft::$app->request->getRequiredBodyParam('translation');
 
         // Save to translation file
-        Translate::$app->translate->set($site->language, $translations, $translatePath);
+        Translate::getInstance()->translate->set($site->language, $translations, $translatePath);
 
         // Redirect back to page
         return $this->asJson($response);
