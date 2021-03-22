@@ -24,21 +24,22 @@ class UnitTester extends Actor
 {
     use _generated\UnitTesterActions;
 
-    public function parseRegex($expressions, $string, $pos = 2)
+    public function parseRegex($expressions, $string, $pos = 1)
     {
         $translator = new \statikbe\translate\services\Translate();
+        $translations = [];
         foreach ($expressions as $regex) {
             $matches = $translator->parseString($regex, $string);
             if (!$matches) {
-                return false;
+                continue;
             }
             if (array_filter($matches)) {
                 foreach ($matches[$pos] as $original) {
-                    $str = $original;
+                    $translations[] = $original;
                 }
-                return $str;
+                return $translations;
             }
         }
-        return false;
+        return $translations;
     }
 }
