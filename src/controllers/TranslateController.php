@@ -144,7 +144,7 @@ class TranslateController extends BaseController
             'success' => true,
             'errors' => []
         ];
-        $siteId = Craft::$app->request->getRequiredBodyParam('siteId');
+        $siteId = Craft::$app->request->getBodyParam('siteId', Craft::$app->getSites()->getPrimarySite()->id);
         $sourceKey = Craft::$app->request->getRequiredBodyParam('sourceKey');
         $site = Craft::$app->getSites()->getSiteById($siteId);
 
