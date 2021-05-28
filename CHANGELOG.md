@@ -5,10 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## 1.2.2 - 2021-05-28
+### Fixed
+- Fixed an issue where the siteId would not be set when navigating straight to the Translate page after login
+
+
 ## 1.2.1 - 2021-03-22
 ### Fixed
 - Fixed an issue with the regex used to match translations in Twig files
-
 
 
 ## 1.2.0 - 2021-03-02
