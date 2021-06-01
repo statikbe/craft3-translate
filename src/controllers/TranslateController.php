@@ -146,7 +146,7 @@ class TranslateController extends BaseController
         ];
         $siteId = Craft::$app->request->getBodyParam('siteId', Craft::$app->getSites()->getPrimarySite()->id);
         $sourceKey = Craft::$app->request->getRequiredBodyParam('sourceKey');
-        $site = Craft::$app->getSites()->getSiteById($siteId);
+        $site = Craft::$app->getSites()->getSiteById((int)$siteId);
 
         $pluginSubString = 'plugins/plugins:';
         $translatePath = null;

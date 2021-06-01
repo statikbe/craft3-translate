@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## 1.2.3 - 2021-06-01
+### Fixed
+- Site ID should always be an integer.
+
+
+
 ## 1.2.2 - 2021-05-28
 ### Fixed
 - Fixed an issue where the siteId would not be set when navigating straight to the Translate page after login
