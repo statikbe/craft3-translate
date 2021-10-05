@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## 1.2.4 - 2021-10-05
+### Fixed
+- Better fallback for missing siteId value
+
 ## 1.2.3 - 2021-06-01
 ### Fixed
 - Site ID should always be an integer.
