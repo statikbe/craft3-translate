@@ -16,7 +16,9 @@ use craft\elements\db\ElementQueryInterface;
 use craft\helpers\FileHelper;
 use craft\web\ErrorHandler;
 use statikbe\translate\elements\db\TranslateQuery;
+use statikbe\translate\events\RegisterPluginTranslationEvent;
 use statikbe\translate\Translate as TranslatePlugin;
+use yii\base\Event;
 
 class Translate extends Element
 {
@@ -26,6 +28,8 @@ class Translate extends Element
     const ALL = 'all';
     const TRANSLATED = 'live';
     const PENDING = 'pending';
+
+    const EVENT_REGISTER_PLUGIN_TRANSLATION = "event_register_plugin_translation";
 
     public $original;
     public $translation;
@@ -271,16 +275,20 @@ class Translate extends Element
             'nested' => $templateSources
         ];
 
-        $modulesSources = array();
-        $modules = Craft::$app->getModules();
+        $event = new RegisterPluginTranslationEvent([
+            'plugins' => []
+        ]);
 
-        foreach (array_diff_key($modules, Craft::$app->getPlugins()->getAllPlugins()) as $path => $module) {
+        Event::trigger(__CLASS__ , self::EVENT_REGISTER_PLUGIN_TRANSLATION, $event);
+        $registerdPlugins = array_filter($event->plugins);
+
+        foreach ($registerdPlugins as $path => $module) {
 
             $modulesSources['plugins:'.$path] = [
                 'label' => $module->id,
                 'key' => 'plugins:'.$module->id,
                 'criteria' => [
-                    'pluginHandle' => $module->id,
+                    'pluginHandle' => $module->getHandle(),
                     'source' => [
                         $module->getBasePath()
                     ],
@@ -298,7 +306,6 @@ class Translate extends Element
             'nested' => $modulesSources
         ];
 
-        // @todo add hook
         return $sources;
     }
 
@@ -316,7 +323,6 @@ class Translate extends Element
         if ($elementQuery->translateStatus) {
             $elementQuery->status = $elementQuery->translateStatus;
         }
-
         $elements = TranslatePlugin::getInstance()->translate->get($elementQuery);
 
         $variables = [

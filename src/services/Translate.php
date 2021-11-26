@@ -16,6 +16,7 @@ use craft\elements\db\ElementQueryInterface;
 use craft\helpers\ElementHelper;
 use craft\helpers\FileHelper;
 use Exception;
+use statikbe\translate\elements\db\TranslateQuery;
 use statikbe\translate\elements\Translate as TranslateElement;
 use Throwable;
 
@@ -121,7 +122,7 @@ class Translate extends Component
      * @throws \Twig_Error_Loader
      * @throws \yii\base\Exception
      */
-    public function get(ElementQueryInterface $query, $category = 'site')
+    public function get(TranslateQuery $query, $category = 'site')
     {
         sleep(2);
 
@@ -132,7 +133,11 @@ class Translate extends Component
         $translations = [];
 
         // Loop through paths
+
         foreach ($query->source as $path) {
+            if($query->pluginHandle) {
+                $category = $query->pluginHandle;
+            }
             // Check if this is a folder or a file
             $isDir = is_dir($path);
 
