@@ -46,7 +46,7 @@ class Translate extends Element
      */
     public function getName()
     {
-        return Craft::t('translate','Translations');
+        return Craft::t('translate', 'Translations');
     }
 
     /**
@@ -57,7 +57,7 @@ class Translate extends Element
     /** @noinspection PhpInconsistentReturnPointsInspection */
     public function __toString()
     {
-        try{
+        try {
             return $this->original;
         } catch (\Exception $e) {
             ErrorHandler::convertExceptionToError($e);
@@ -88,8 +88,8 @@ class Translate extends Element
     public static function statuses(): array
     {
         return [
-            self::TRANSLATED => Craft::t('translate','Translated'),
-            self::PENDING => Craft::t('translate','Pending'),
+            self::TRANSLATED => Craft::t('translate', 'Translated'),
+            self::PENDING => Craft::t('translate', 'Pending'),
         ];
     }
 
@@ -117,11 +117,11 @@ class Translate extends Element
     {
         $primary = Craft::$app->getSites()->getPrimarySite();
         $locale = Craft::$app->getI18n()->getLocaleById($primary->language);
-        $attributes['original'] = ['label' => Craft::t('translate','Source: {region} ({language})', [
-            'language'=>$primary->language,
+        $attributes['original'] = ['label' => Craft::t('translate', 'Source: {region} ({language})', [
+            'language' => $primary->language,
             'region' => $locale->displayName
         ])];
-        $attributes['field']     = ['label' => Craft::t('app','Translation')];
+        $attributes['field'] = ['label' => Craft::t('app', 'Translation')];
 
         return $attributes;
     }
@@ -141,7 +141,7 @@ class Translate extends Element
     /**
      * Don't encode the attribute html.
      *
-     * @param string           $attribute
+     * @param string $attribute
      *
      * @return string
      */
@@ -172,13 +172,13 @@ class Translate extends Element
     {
         $sources = [];
 
-        $sources[] = ['heading' => Craft::t('translate','Template Status')];
+        $sources[] = ['heading' => Craft::t('translate', 'Template Status')];
 
         $key = 'status:' . self::ALL;
         $sources[] = [
-            'status'   => null,
-            'key'      => $key,
-            'label'    => Craft::t('translate', 'All'),
+            'status' => null,
+            'key' => $key,
+            'label' => Craft::t('translate', 'All'),
             'criteria' => [
                 'source' => [
                     Craft::$app->path->getSiteTemplatesPath()
@@ -188,9 +188,9 @@ class Translate extends Element
 
         $key = 'status:' . self::PENDING;
         $sources[] = [
-            'status'   => self::PENDING,
-            'key'      => $key,
-            'label'    => Craft::t('translate', 'Pending'),
+            'status' => self::PENDING,
+            'key' => $key,
+            'label' => Craft::t('translate', 'Pending'),
             'criteria' => [
                 'source' => [
                     Craft::$app->path->getSiteTemplatesPath()
@@ -201,9 +201,9 @@ class Translate extends Element
 
         $key = 'status:' . self::TRANSLATED;
         $sources[] = [
-            'status'   => self::TRANSLATED,
-            'key'      => $key,
-            'label'    => Craft::t('translate', 'Translated'),
+            'status' => self::TRANSLATED,
+            'key' => $key,
+            'label' => Craft::t('translate', 'Translated'),
             'criteria' => [
                 'source' => [
                     Craft::$app->path->getSiteTemplatesPath()
@@ -216,7 +216,7 @@ class Translate extends Element
         $templateSources = array();
         $options = [
             'recursive' => false,
-            'only' => ['*.html','*.twig','*.js','*.json','*.atom','*.rss'],
+            'only' => ['*.html', '*.twig', '*.js', '*.json', '*.atom', '*.rss'],
             'except' => ['vendor/', 'node_modules/']
         ];
         $templates = FileHelper::findFiles(Craft::$app->path->getSiteTemplatesPath(), $options);
@@ -227,9 +227,9 @@ class Translate extends Element
             // Fixes bug in ElementHelper::findSource in Linux OS
             $cleanTemplateKey = str_replace('/', '*', $template);
             // Add template source
-            $templateSources['templatessources:'.$fileName] = [
+            $templateSources['templatessources:' . $fileName] = [
                 'label' => $fileName,
-                'key' => 'templates:'.$cleanTemplateKey,
+                'key' => 'templates:' . $cleanTemplateKey,
                 'criteria' => [
                     'source' => [
                         $template
@@ -251,9 +251,9 @@ class Translate extends Element
             // Fixes bug in ElementHelper::findSource in Linux OS
             $cleanTemplateKey = str_replace('/', '*', $template);
             // Add template source
-            $templateSources['templatessources:'.$fileName] = [
-                'label' => $fileName.'/',
-                'key' => 'templates:'.$cleanTemplateKey,
+            $templateSources['templatessources:' . $fileName] = [
+                'label' => $fileName . '/',
+                'key' => 'templates:' . $cleanTemplateKey,
                 'criteria' => [
                     'source' => [
                         $template
@@ -262,11 +262,11 @@ class Translate extends Element
             ];
         }
 
-        $sources[] = ['heading' => Craft::t('translate','Default')];
+        $sources[] = ['heading' => Craft::t('translate', 'Default')];
 
         $sources[] = [
-            'label'    => Craft::t('translate', 'Templates'),
-            'key'      => 'all-templates:',
+            'label' => Craft::t('translate', 'Templates'),
+            'key' => 'all-templates:',
             'criteria' => [
                 'source' => [
                     Craft::$app->path->getSiteTemplatesPath()
@@ -279,14 +279,14 @@ class Translate extends Element
             'plugins' => []
         ]);
 
-        Event::trigger(__CLASS__ , self::EVENT_REGISTER_PLUGIN_TRANSLATION, $event);
+        Event::trigger(__CLASS__, self::EVENT_REGISTER_PLUGIN_TRANSLATION, $event);
         $registerdPlugins = array_filter($event->plugins);
 
         foreach ($registerdPlugins as $path => $module) {
 
-            $modulesSources['plugins:'.$path] = [
+            $modulesSources['plugins:' . $path] = [
                 'label' => $module->id,
-                'key' => 'plugins:'.$module->id,
+                'key' => 'plugins:' . $module->id,
                 'criteria' => [
                     'pluginHandle' => $module->getHandle(),
                     'source' => [
@@ -296,15 +296,17 @@ class Translate extends Element
             ];
         }
 
-        $sources[] = [
-            'label'    => Craft::t('translate', 'Modules'),
-            'key' => 'modules',
-            'criteria' => [
-                'source' => [
+        if (isset($modulesSources)) {
+            $sources[] = [
+                'label' => Craft::t('translate', 'Modules'),
+                'key' => 'modules',
+                'criteria' => [
+                    'source' => [
+                    ],
                 ],
-            ],
-            'nested' => $modulesSources
-        ];
+                'nested' => $modulesSources
+            ];
+        }
 
         return $sources;
     }
@@ -338,7 +340,7 @@ class Translate extends Element
         Craft::$app->view->registerJs("$('table.fullwidth thead th').css('width', '50%');");
         Craft::$app->view->registerJs("$('.buttons.hidden').removeClass('hidden');");
 
-        $template = '_elements/'.$viewState['mode'].'view/'.($includeContainer ? 'container' : 'elements');
+        $template = '_elements/' . $viewState['mode'] . 'view/' . ($includeContainer ? 'container' : 'elements');
 
         return Craft::$app->view->renderTemplate($template, $variables);
     }
