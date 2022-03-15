@@ -17,7 +17,7 @@ class TranslateQuery extends ElementQuery
 
     // General - Properties
     // =========================================================================
-    public mixed $id;
+    public mixed $id = null;
     public $source;
     public $translateStatus;
     public $pluginHandle;

@@ -331,7 +331,7 @@ class Translate extends Element
             'viewMode' => $viewState['mode'],
             'context' => $context,
             'disabledElementIds' => $disabledElementIds,
-            'attributes' => Craft::$app->getElementIndexes()->getTableAttributes(static::class, $sourceKey),
+            'attributes' => Craft::$app->getElementSources()->getTableAttributes(static::class, $sourceKey),
             'elements' => $elements,
             'showCheckboxes' => $showCheckboxes
         ];
