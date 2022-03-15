@@ -44,7 +44,7 @@ class Translate extends Element
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return Craft::t('translate', 'Translations');
     }
@@ -55,7 +55,7 @@ class Translate extends Element
      * @return string
      */
     /** @noinspection PhpInconsistentReturnPointsInspection */
-    public function __toString()
+    public function __toString(): string
     {
         try {
             return $this->original;
@@ -96,7 +96,7 @@ class Translate extends Element
     /**
      * @inheritdoc
      */
-    public function getStatus()
+    public function getStatus(): string
     {
         if ($this->original != $this->translation) {
             return static::TRANSLATED;

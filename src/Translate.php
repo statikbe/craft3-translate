@@ -21,11 +21,11 @@ use statikbe\translate\services\Translate as TranslateService;
  */
 class Translate extends Plugin
 {
-    public $hasCpSection = true;
+    public bool $hasCpSection = true;
 
-    public $hasCpSettings = false;
+    public bool $hasCpSettings = false;
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 

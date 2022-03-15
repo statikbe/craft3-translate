@@ -58,7 +58,7 @@ class Translate extends Component
      *
      * @codeCoverageIgnore
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
 
