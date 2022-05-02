@@ -153,20 +153,22 @@ class TranslateController extends BaseController
 
         $pluginSubString = 'modules/plugins:';
         $translatePath = null;
+        $sitePath = Craft::$app->getPath()->getSiteTranslationsPath();
 
         // Process Plugin Status
         if (strpos($sourceKey, $pluginSubString) !== false) {
             $criteria = explode($pluginSubString, $sourceKey);
-
             $plugin = Craft::$app->plugins->getPlugin($criteria[1]);
-            $pluginHandle = $plugin->getHandle();
-            $translatePath = $plugin->getBasePath() ?? null;
-            if ($translatePath && $pluginHandle){
-                $sitePath = Craft::$app->getPath()->getSiteTranslationsPath();
-                $translatePath = $sitePath.DIRECTORY_SEPARATOR.$site->language.DIRECTORY_SEPARATOR.$pluginHandle.'.php';
+            if ($plugin) {
+                $pluginHandle = $plugin->getHandle();
+                $translatePath = $plugin->getBasePath() ?? null;
+                if ($translatePath && $pluginHandle) {
+                    $translatePath = $sitePath . DIRECTORY_SEPARATOR . $site->language . DIRECTORY_SEPARATOR . $pluginHandle . '.php';
+                }
+            } else {
+                    $translatePath = $sitePath . DIRECTORY_SEPARATOR . $site->language . DIRECTORY_SEPARATOR . $criteria[1] . '.php';
             }
         }
-
         $translations = Craft::$app->request->getRequiredBodyParam('translation');
 
         // Save to translation file
