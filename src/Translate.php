@@ -1,6 +1,6 @@
 <?php
 /**
- * Translate plugin for Craft CMS 3.x
+ * Translate plugin for Craft CMS 4.x
  *
  * Translate your website templates and plugins into multiple languages. Bulk translation with Google Translate or Yandex.
  *
@@ -12,7 +12,6 @@ namespace statikbe\translate;
 
 use craft\base\Plugin;
 use statikbe\translate\services\Translate as TranslateService;
-
 
 /**
  * Class Translate
