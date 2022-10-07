@@ -135,9 +135,8 @@ class TranslateController extends BaseController
      * Save translations.
      *
      * @throws \yii\web\BadRequestHttpException
-     * @return String
      */
-    public function actionSave()
+    public function actionSave(): \yii\web\Response
     {
         $this->requireAcceptsJson();
         $response = [
