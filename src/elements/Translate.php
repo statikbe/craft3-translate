@@ -122,6 +122,7 @@ class Translate extends Element
 //            'language' => $primary->language,
 //            'region' => $locale->displayName
 //        ])];
+//        $currentSite = Craft::$app->getRequest()->getQueryParam('site');
         $attributes['field'] = ['label' => Craft::t('app', 'Translation')];
         return $attributes;
     }
@@ -288,10 +289,12 @@ class Translate extends Element
         foreach ($registerdPlugins as $path => $module) {
 
             //was vroeger $modulesources (om plugin mapje te maken met eronder de plugins, nu enkel balkje per plugin)
-            $sources['plugins:' . $path] = [
+//            $sources['plugins:' . $path] = [
+                $modulesSources['plugins:' . $path] = [
                 'label' => $module->id,
                 'key' => 'plugins:' . $module->id,
                 'criteria' => [
+//                    'pluginHandle' => $module->getHandle(),
                     'pluginHandle' => $module->getHandle(),
                     'source' => [
                         $module->getBasePath()
@@ -301,17 +304,17 @@ class Translate extends Element
         }
 
         //luste vroeger de plugins uit die in de plugins map hierboven terecht kwamen
-//        if (isset($modulesSources)) {
-//            $sources[] = [
-//                'label' => Craft::t('translate', 'Modules'),
-//                'key' => 'modules',
-//                'criteria' => [
-//                    'source' => [
-//                    ],
-//                ],
-//                'nested' => $modulesSources
-//            ];
-//        }
+        if (isset($modulesSources)) {
+            $sources[] = [
+                'label' => Craft::t('translate', 'Modules'),
+                'key' => 'modules',
+                'criteria' => [
+                    'source' => [
+                    ],
+                ],
+                'nested' => $modulesSources
+            ];
+        }
 
         return $sources;
     }
@@ -361,6 +364,6 @@ class Translate extends Element
     {
         $site = Craft::$app->getSites()->getSiteById($this->siteId);
 
-        return $site->language;
+        return $site->handle;
     }
 }

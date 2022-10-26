@@ -170,7 +170,7 @@ class TranslateController extends BaseController
             $translatePath = $plugin->getBasePath() ?? null;
             if ($translatePath && $pluginHandle){
                 $sitePath = Craft::$app->getPath()->getSiteTranslationsPath();
-                $translatePath = $sitePath.DIRECTORY_SEPARATOR.$site->language.DIRECTORY_SEPARATOR.$pluginHandle.'.php';
+                $translatePath = $sitePath.DIRECTORY_SEPARATOR.$site->handle.DIRECTORY_SEPARATOR.$pluginHandle.'.php';
             }
         }
 
