@@ -41,7 +41,7 @@ class TranslateQuery extends ElementQuery
     /**
      * @inheritdoc
      */
-    public function getStatus()
+    public function getStatus(): array|string|null
     {
         return $this->status;
     }

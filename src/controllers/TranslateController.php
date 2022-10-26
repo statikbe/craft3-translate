@@ -28,7 +28,7 @@ class TranslateController extends BaseController
      *
      * @throws \yii\base\Exception
      */
-    public function actionDownload()
+    public function actionDownload(): \yii\web\Response
     {
         $this->requireAcceptsJson();
         $siteId = Craft::$app->request->getRequiredBodyParam('siteId');
@@ -42,28 +42,32 @@ class TranslateController extends BaseController
         $query = ElementTranslate::find();
         $query->status = null;
         $pluginName = null;
+
         // Get params
         // Process Template Status
-        if (strpos($sourceKey, $statusSubString) !== false) {
+        if (str_contains($sourceKey, $statusSubString)) {
             $criteria = explode($statusSubString, $sourceKey);
             $query->status = $criteria[1] ?? null;
             $sources[] = Craft::$app->path->getSiteTemplatesPath();
         }
+
         // Process Templates Status
-        if (strpos($sourceKey, $templateSubString) !== false) {
+        if (str_contains($sourceKey, $templateSubString)) {
             $criteria = explode($templateSubString, $sourceKey);
             $sources[] = $criteria[1] ?? Craft::$app->path->getSiteTemplatesPath();
         }
+
         // Process Plugin Status
-        if (strpos($sourceKey, $pluginSubString) !== false) {
+        if (str_contains($sourceKey, $pluginSubString)) {
             $criteria = explode($pluginSubString, $sourceKey);
             $plugin = Craft::$app->plugins->getPlugin($criteria[1]);
             $pluginName = $plugin->getHandle();
             $sources[] = $plugin->getBasePath() ?? '';
             $query->pluginHandle = $plugin->getHandle();
         }
+
         // All templates
-        if (strpos($sourceKey, $allTemplatesSubString) !== false) {
+        if (str_contains($sourceKey, $allTemplatesSubString)) {
             $sources[] = Craft::$app->path->getSiteTemplatesPath();
         }
 
@@ -72,6 +76,7 @@ class TranslateController extends BaseController
         }
 
         $site = Craft::$app->getSites()->getSiteById($siteId);
+
         // @todo add support for search
         $query->search = false;
         $query->siteId = $siteId;
@@ -82,13 +87,16 @@ class TranslateController extends BaseController
 
         // Re-order data
         $data = StringHelper::convertToUTF8('"'.Craft::t('translate','Source {language}',['language'=> $site->language]).'","'.Craft::t('translate','Translation')."\"\r\n");
+
         foreach ($occurences as $element) {
             $data .= StringHelper::convertToUTF8('"'.$element->original.'","'.$element->translation."\"\r\n");
         }
 
         $info = Craft::$app->getInfo();
+        //name in info bestaat niet. => Nu vast ingevuld met import
         $systemName = FileHelper::sanitizeFilename(
-            $pluginName ?? $info->name,
+//            $pluginName ?? $info->name,
+            $pluginName ?? "import",
             [
                 'asciiOnly' => true,
                 'separator' => '_'
@@ -98,7 +106,6 @@ class TranslateController extends BaseController
         $primarySite = Craft::$app->getSites()->getPrimarySite();
         $sourceTo = $primarySite->language.'_to_'.$site->language;
         $fileName = strtolower($systemName.'_translations_'.$sourceTo.'_'.$date);
-
         $file = Craft::$app->getPath()->getTempPath().DIRECTORY_SEPARATOR.StringHelper::toLowerCase($fileName.'.csv');
         $fd = fopen ($file, "w");
         fputs($fd, $data);
@@ -139,6 +146,7 @@ class TranslateController extends BaseController
     public function actionSave(): \yii\web\Response
     {
         $this->requireAcceptsJson();
+
         $response = [
             'success' => true,
             'errors' => []
@@ -154,7 +162,7 @@ class TranslateController extends BaseController
         $translatePath = null;
 
         // Process Plugin Status
-        if (strpos($sourceKey, $pluginSubString) !== false) {
+        if (str_contains($sourceKey, $pluginSubString)) {
             $criteria = explode($pluginSubString, $sourceKey);
 
             $plugin = Craft::$app->plugins->getPlugin($criteria[1]);
@@ -169,7 +177,8 @@ class TranslateController extends BaseController
         $translations = Craft::$app->request->getRequiredBodyParam('translation');
 
         // Save to translation file
-        Translate::getInstance()->translate->set($site->language, $translations, $translatePath);
+        //changed $site->language to site handle
+        Translate::getInstance()->translate->set($site->handle, $translations, $translatePath);
 
         // Redirect back to page
         return $this->asJson($response);

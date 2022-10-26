@@ -17,6 +17,7 @@
 {% do view.registerAssetBundle("statikbe\\translate\\assetbundles\\translate\\TranslateAsset") %}
 
 {% block actionButton %}
+
     <div class="btngroup">
         <input id="save-elements-button" type="submit" class="btn submit" value="{{ 'Save'|t('app') }}">
         {# IF we need a submenu #}
@@ -24,7 +25,7 @@
         <div class="menu">
             <ul>
                 <li>
-                    <a id="donwload-button" class="formsubmit translations-download-button"
+                    <a id="download-button" class="formsubmit translations-download-button"
                        data-action="translate/translate/download"
                        data-siteId="{{ elementInstance.siteId }}">
                         {{ "Download"|t('translate') }}
@@ -36,12 +37,26 @@
 {% endblock %}
 
 {% block content %}
-    <form method="post" id="translate-ajax" accept-charset="utf-8">
+
+    <form method="post" id="translate-ajax" accept-charset="utf-8" style="display: flex; flex-direction: column; gap: 3rem;">
         {{ csrfInput() }}
+        {% set selectedSite = craft.app.sites.getSiteByHandle(craft.app.request.getQueryParam('site') ) %}
         <input type="hidden" name="action" value="translate/translate/save">
-        <input type="hidden" name="siteId" value="{{ elementInstance.siteId }}">
+        <input type="hidden" name="siteId" value="{{  selectedSite.id }}">
+
+        {# banner block #}
+        <div class="readable tablepanel" data-layout-element="3a81c043-79a2-48d1-ab88-a0d512b7be9f">
+            <blockquote class="note tip" >
+                <p class="currentTranslation">{{ "You are editing the translations for site "|t }}"<span>{{selectedSite.name}}</span>"</p>
+            </blockquote>
+        </div>
+        {# einde banner block #}
 
         {{ parent() }}
+
+{# Verwijderd footer blok, pagination werkt niet maar alles wordt getoond op 1pagina => oplossing niet gevonden (in baseElementIndex.js staat count-Container klasse #}
+        {% block footer %}
+        {% endblock %}
     </form>
 {% endblock %}
 
