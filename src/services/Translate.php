@@ -27,7 +27,7 @@ class Translate extends Component
      * @credits to boboldehampsink
      * @var []
      */
-    public $_expressions = array(
+    public array $_expressions = array(
         // Regex for Craft::t('category', '..')
         'php' => array(
             // Single quotes
@@ -53,12 +53,13 @@ class Translate extends Component
         )
     );
 
+
     /**
      * Initialize service.
      *
      * @codeCoverageIgnore
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -73,12 +74,12 @@ class Translate extends Component
      *
      * @param string $locale
      * @param array $translations
-     * @param string $translationPath
+     * @param string|null $translationPath
      *
      * @return bool
      * @throws \Exception if unable to write to file
      */
-    public function set($locale, array $translations, $translationPath = null)
+    public function set(string $locale, array $translations, string $translationPath = null): bool
     {
         // Determine locale's translation destination file
         $file = $translationPath ?? $this->getSitePath($locale);
@@ -122,7 +123,7 @@ class Translate extends Component
      * @throws \Twig_Error_Loader
      * @throws \yii\base\Exception
      */
-    public function get(TranslateQuery $query, $category = 'site')
+    public function get(TranslateQuery $query, string $category = 'site'): array
     {
         sleep(2);
 
@@ -168,7 +169,6 @@ class Translate extends Component
                 $translations = array_merge($translations, $elements);
             }
         }
-
         return $translations;
     }
 
@@ -184,7 +184,7 @@ class Translate extends Component
      * @throws \Twig_Error_Loader
      * @throws \yii\base\Exception
      */
-    private function _processFile($path, $file, ElementQueryInterface $query, $category)
+    private function _processFile(string $path, string $file, ElementQueryInterface $query, string $category): array
     {
         $translations = array();
         $contents = file_get_contents($file);
@@ -203,10 +203,11 @@ class Translate extends Component
                 foreach ($matches[$pos] as $original) {
                     // Apply the Craft Translate
                     $site = Craft::$app->getSites()->getSiteById($query->siteId);
+                    //changed $site->language to site handle
                     $translation = Craft::t($category, $original, null, $site->language);
 
                     $view = Craft::$app->getView();
-                    $elementId = ElementHelper::createSlug($original);
+                    $elementId = ElementHelper::generateSlug($original);
 
                     $field = $view->renderTemplate('_includes/forms/text', [
                         'id' => $elementId,
@@ -217,7 +218,7 @@ class Translate extends Component
 
                     // Let's create our translate element with all the info
                     $element = new TranslateElement([
-                        'id' => ElementHelper::createSlug($original),
+                        'id' => ElementHelper::generateSlug($original),
                         'original' => $original,
                         'translation' => $translation,
                         'source' => $path,
@@ -225,6 +226,7 @@ class Translate extends Component
                         'siteId' => $query->siteId,
                         'field' => $field,
                     ]);
+
 
                     // Continue when Searching
                     if ($query->search && !stristr($element->original, $query->search) && !stristr($element->translation, $query->search)) {
@@ -265,7 +267,7 @@ class Translate extends Component
      * @return string
      * @throws \yii\base\Exception
      */
-    public function getSitePath($locale)
+    public function getSitePath($locale): string
     {
         $sitePath = Craft::$app->getPath()->getSiteTranslationsPath();
         return $sitePath . DIRECTORY_SEPARATOR . $locale . DIRECTORY_SEPARATOR . 'site.php';

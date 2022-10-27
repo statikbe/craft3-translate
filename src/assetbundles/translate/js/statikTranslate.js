@@ -25,9 +25,64 @@
         init: function()
         {
             this.addListener($('#save-elements-button'), 'activate', 'processAjaxCall');
+
+            //uitgebreide functie om te luisteren naar changes in url
+            ;(function (){
+                let oldPushState = history.pushState;
+                history.pushState = function pushState() {
+                    let ret = oldPushState.apply(this, arguments);
+                    window.dispatchEvent(new Event('pushstate'));
+                    window.dispatchEvent(new Event('locationchange'));
+                    return ret;
+                };
+
+                let oldReplaceState = history.replaceState;
+                history.replaceState = function replaceState() {
+                    let ret = oldReplaceState.apply(this, arguments);
+                    window.dispatchEvent(new Event('replacestate'));
+                    window.dispatchEvent(new Event('locationchange'));
+                    return ret;
+                };
+
+                window.addEventListener('popstate', () => {
+                    window.dispatchEvent(new Event('locationchange'));
+                });
+            })();
+
+            //haal search query uit url
+            let query = window.location.search;
+
+            //splits query op naar enkel de site
+            let q = query.split("&");
+
+            //haal site handle uit query split
+            let language = q[0].split("=");
+            let lang = language[1];
+
+            //als url veranderd verander dan ook de banner naar de juiste site handle
+            window.addEventListener('locationchange', function(){
+                //vergelijk de huidige tekst in de banner met de handle in de url
+                if(document.querySelector(".sitemenubtn").innerHTML != lang){
+                    document.querySelector(".currentTranslation span").innerHTML = document.querySelector(".sitemenubtn").innerHTML;
+                }
+            });
+
             this.$form = $("#translate-ajax");
+
+
+            //save with short cut cmd + S or ctrl + S
+            this.addListener(Garnish.$doc, 'keydown', function(ev)
+            {
+                if ((ev.metaKey || ev.ctrlKey) && ev.keyCode == 83)
+                {
+                    ev.preventDefault();
+                    this.processAjaxCall(event);
+                }
+            });
+
             var settings = {};
             this.$menu = new Garnish.MenuBtn("#statik-menubtn", settings);
+
             var $siteMenu = $('.sitemenubtn:first').menubtn().data('menubtn').menu;
             var $siteIdInput = $('input[name="siteId"]');
 
@@ -40,7 +95,7 @@
 
             // Init the form
             let siteId = this.getSiteId();
-            $siteIdInput.val(siteId);
+            //$siteIdInput.val(siteId);
 
             // Change the siteId when on hidden values
             $siteMenu.on('optionselect', function(ev) {
@@ -48,11 +103,15 @@
             });
 
             Craft.elementIndex.on('afterAction', this.manageAfterAction);
-            this.$menu.on('optionSelect', this.manageMenu)
+            this.$menu.on('optionSelect', this.manageMenu);
+        },
+
+        submitPrimaryForm: function (event) {
+            this.processAjaxCall(event);
         },
 
         getSiteId: function() {
-            // If the old BaseElementIndex.siteId value is in localStorage, go aheand and remove & return that
+            // If the old BaseElementIndex.siteId value is in localStorage, go ahead and remove & return that
             let siteId = Craft.getLocalStorage('BaseElementIndex.siteId');
             if (typeof siteId !== 'undefined') {
                 Craft.removeLocalStorage('BaseElementIndex.siteId');

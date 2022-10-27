@@ -27,7 +27,7 @@ class Translate extends Element
      */
     const ALL = 'all';
     const TRANSLATED = 'live';
-    const PENDING = 'pending';
+    const PENDING = 'disabled';
 
     const EVENT_REGISTER_PLUGIN_TRANSLATION = "event_register_plugin_translation";
 
@@ -37,14 +37,14 @@ class Translate extends Element
     public $file;
     public $locale = 'en_us';
     public $field;
-    public $translateStatus;
+//    public $translateStatus;
 
     /**
      * Return element type name.
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return Craft::t('translate', 'Translations');
     }
@@ -55,7 +55,7 @@ class Translate extends Element
      * @return string
      */
     /** @noinspection PhpInconsistentReturnPointsInspection */
-    public function __toString()
+    public function __toString(): string
     {
         try {
             return $this->original;
@@ -77,7 +77,7 @@ class Translate extends Element
      */
     public static function hasStatuses(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -87,16 +87,17 @@ class Translate extends Element
      */
     public static function statuses(): array
     {
-        return [
-            self::TRANSLATED => Craft::t('translate', 'Translated'),
-            self::PENDING => Craft::t('translate', 'Pending'),
-        ];
+//        return [
+//            self::TRANSLATED => Craft::t('translate', 'Translated'),
+//            self::PENDING => Craft::t('translate', 'Pending'),
+//        ];
+        return [];
     }
 
     /**
      * @inheritdoc
      */
-    public function getStatus()
+    public function getStatus(): string
     {
         if ($this->original != $this->translation) {
             return static::TRANSLATED;
@@ -115,14 +116,14 @@ class Translate extends Element
      */
     protected static function defineTableAttributes(): array
     {
-        $primary = Craft::$app->getSites()->getPrimarySite();
-        $locale = Craft::$app->getI18n()->getLocaleById($primary->language);
-        $attributes['original'] = ['label' => Craft::t('translate', 'Source: {region} ({language})', [
-            'language' => $primary->language,
-            'region' => $locale->displayName
-        ])];
+//        $primary = Craft::$app->getSites()->getPrimarySite();
+//        $locale = Craft::$app->getI18n()->getLocaleById($primary->language);
+//        $attributes['original'] = ['label' => Craft::t('translate', 'Source: {region} ({language})', [
+//            'language' => $primary->language,
+//            'region' => $locale->displayName
+//        ])];
+//        $currentSite = Craft::$app->getRequest()->getQueryParam('site');
         $attributes['field'] = ['label' => Craft::t('app', 'Translation')];
-
         return $attributes;
     }
 
@@ -135,7 +136,7 @@ class Translate extends Element
      */
     protected static function defineDefaultTableAttributes(string $source): array
     {
-        return ['original', 'field'];
+        return ['field'];
     }
 
     /**
@@ -160,7 +161,7 @@ class Translate extends Element
             'translation',
             'source',
             'file',
-            'status',
+            //'status',
             'locale'
         ];
     }
@@ -172,95 +173,98 @@ class Translate extends Element
     {
         $sources = [];
 
-        $sources[] = ['heading' => Craft::t('translate', 'Template Status')];
+        //toonde extra kolom met template status (bolletjes groen/oranje)
+//        $sources[] = ['heading' => Craft::t('translate', 'Template Status')];
+//
+//        $key = 'status:' . self::ALL;
+//        $sources[] = [
+//            'status' => null,
+//            'key' => $key,
+//            'label' => Craft::t('translate', 'All'),
+//            'criteria' => [
+//                'source' => [
+//                    Craft::$app->path->getSiteTemplatesPath()
+//                ],
+//            ],
+//        ];
+//
+//        $key = 'status:' . self::PENDING;
+//        $sources[] = [
+//            'status' => self::PENDING,
+//            'key' => $key,
+//            'label' => Craft::t('translate', 'Pending'),
+//            'criteria' => [
+//                'source' => [
+//                    Craft::$app->path->getSiteTemplatesPath()
+//                ],
+//                'translateStatus' => self::PENDING
+//            ],
+//        ];
+//
+//        $key = 'status:' . self::TRANSLATED;
+//        $sources[] = [
+//            'status' => self::TRANSLATED,
+//            'key' => $key,
+//            'label' => Craft::t('translate', 'Translated'),
+//            'criteria' => [
+//                'source' => [
+//                    Craft::$app->path->getSiteTemplatesPath()
+//                ],
+//                'translateStatus' => self::TRANSLATED
+//            ],
+//        ];
 
-        $key = 'status:' . self::ALL;
-        $sources[] = [
-            'status' => null,
-            'key' => $key,
-            'label' => Craft::t('translate', 'All'),
-            'criteria' => [
-                'source' => [
-                    Craft::$app->path->getSiteTemplatesPath()
-                ],
-            ],
-        ];
+        // Get template sources (toont files in sidebar)
+//        $templateSources = array();
+//        $options = [
+//            'recursive' => false,
+//            'only' => ['*.html', '*.twig', '*.js', '*.json', '*.atom', '*.rss'],
+//            'except' => ['vendor/', 'node_modules/', 'jsPlugins/']
+//        ];
+//
+//        $templates = FileHelper::findFiles(Craft::$app->path->getSiteTemplatesPath(), $options);
+////        $templates = FileHelper::findFiles(Craft::$app->path->getSiteTemplatesPath(), $allTemplates);
+//
+//        foreach ($templates as $template) {
+//            // If matches, get template name
+//            $fileName = basename($template);
+//            // Fixes bug in ElementHelper::findSource in Linux OS
+//            $cleanTemplateKey = str_replace('/', '*', $template);
+//            // Add template source
+//            $templateSources['templatessources:' . $fileName] = [
+//                'label' => $fileName,
+//                'key' => 'templates:' . $cleanTemplateKey,
+//                'criteria' => [
+//                    'source' => [
+//                        $template
+//                    ],
+//                ],
+//            ];
+//        }
 
-        $key = 'status:' . self::PENDING;
-        $sources[] = [
-            'status' => self::PENDING,
-            'key' => $key,
-            'label' => Craft::t('translate', 'Pending'),
-            'criteria' => [
-                'source' => [
-                    Craft::$app->path->getSiteTemplatesPath()
-                ],
-                'translateStatus' => self::PENDING
-            ],
-        ];
-
-        $key = 'status:' . self::TRANSLATED;
-        $sources[] = [
-            'status' => self::TRANSLATED,
-            'key' => $key,
-            'label' => Craft::t('translate', 'Translated'),
-            'criteria' => [
-                'source' => [
-                    Craft::$app->path->getSiteTemplatesPath()
-                ],
-                'translateStatus' => self::TRANSLATED
-            ],
-        ];
-
-        // Get template sources
-        $templateSources = array();
-        $options = [
-            'recursive' => false,
-            'only' => ['*.html', '*.twig', '*.js', '*.json', '*.atom', '*.rss'],
-            'except' => ['vendor/', 'node_modules/']
-        ];
-        $templates = FileHelper::findFiles(Craft::$app->path->getSiteTemplatesPath(), $options);
-
-        foreach ($templates as $template) {
-            // If matches, get template name
-            $fileName = basename($template);
-            // Fixes bug in ElementHelper::findSource in Linux OS
-            $cleanTemplateKey = str_replace('/', '*', $template);
-            // Add template source
-            $templateSources['templatessources:' . $fileName] = [
-                'label' => $fileName,
-                'key' => 'templates:' . $cleanTemplateKey,
-                'criteria' => [
-                    'source' => [
-                        $template
-                    ],
-                ],
-            ];
-        }
-
-        // Folders
-        $options = [
-            'recursive' => false,
-            'except' => ['vendor/', 'node_modules/']
-        ];
-        $templates = FileHelper::findDirectories(Craft::$app->path->getSiteTemplatesPath(), $options);
-
-        foreach ($templates as $template) {
-            // If matches, get template name
-            $fileName = basename($template);
-            // Fixes bug in ElementHelper::findSource in Linux OS
-            $cleanTemplateKey = str_replace('/', '*', $template);
-            // Add template source
-            $templateSources['templatessources:' . $fileName] = [
-                'label' => $fileName . '/',
-                'key' => 'templates:' . $cleanTemplateKey,
-                'criteria' => [
-                    'source' => [
-                        $template
-                    ],
-                ],
-            ];
-        }
+        // Maps (toont folders in sidebar)
+//        $options = [
+//            'recursive' => false,
+//            'except' => ['vendor/', 'node_modules/', 'jsPlugins/']
+//        ];
+//        $folders = FileHelper::findDirectories(Craft::$app->path->getSiteTemplatesPath(), $options);
+//
+//        foreach ($folders as $template) {
+//            // If matches, get template name
+//            $fileName = basename($template);
+//            // Fixes bug in ElementHelper::findSource in Linux OS
+//            $cleanTemplateKey = str_replace('/', '*', $template);
+//            // Add template source
+//            $templateSources['templatessources:' . $fileName] = [
+//                'label' => $fileName . '/',
+//                'key' => 'templates:' . $cleanTemplateKey,
+//                'criteria' => [
+//                    'source' => [
+//                        $template
+//                    ],
+//                ],
+//            ];
+//        }
 
         $sources[] = ['heading' => Craft::t('translate', 'Default')];
 
@@ -272,7 +276,7 @@ class Translate extends Element
                     Craft::$app->path->getSiteTemplatesPath()
                 ]
             ],
-            'nested' => $templateSources
+//            'nested' => $templateSources
         ];
 
         $event = new RegisterPluginTranslationEvent([
@@ -284,7 +288,9 @@ class Translate extends Element
 
         foreach ($registerdPlugins as $path => $module) {
 
-            $modulesSources['plugins:' . $path] = [
+            //was vroeger $modulesources (om plugin mapje te maken met eronder de plugins, nu enkel balkje per plugin)
+//            $sources['plugins:' . $path] = [
+                $modulesSources['plugins:' . $path] = [
                 'label' => $module->id,
                 'key' => 'plugins:' . $module->id,
                 'criteria' => [
@@ -296,6 +302,7 @@ class Translate extends Element
             ];
         }
 
+        //luste vroeger de plugins uit die in de plugins map hierboven terecht kwamen
         if (isset($modulesSources)) {
             $sources[] = [
                 'label' => Craft::t('translate', 'Modules'),
@@ -331,14 +338,18 @@ class Translate extends Element
             'viewMode' => $viewState['mode'],
             'context' => $context,
             'disabledElementIds' => $disabledElementIds,
-            'attributes' => Craft::$app->getElementIndexes()->getTableAttributes(static::class, $sourceKey),
+            'attributes' => Craft::$app->getElementSources()->getTableAttributes(static::class, $sourceKey),
             'elements' => $elements,
-            'showCheckboxes' => $showCheckboxes
+            'sourceKey' => $sourceKey,
+            'includeContainer' => $includeContainer,
+            'showCheckboxes' => false,
         ];
 
         // Better UI
         Craft::$app->view->registerJs("$('table.fullwidth thead th').css('width', '50%');");
         Craft::$app->view->registerJs("$('.buttons.hidden').removeClass('hidden');");
+        Craft::$app->view->registerJs("$('.filter-btn').addClass('hidden');");
+        Craft::$app->view->registerJs("$('.btn.statusmenubtn').addClass('hidden');");
 
         $template = '_elements/' . $viewState['mode'] . 'view/' . ($includeContainer ? 'container' : 'elements');
 
@@ -348,7 +359,7 @@ class Translate extends Element
     /**
      * @return null|string
      */
-    public function getLocale()
+    public function getLocale(): ?string
     {
         $site = Craft::$app->getSites()->getSiteById($this->siteId);
 
