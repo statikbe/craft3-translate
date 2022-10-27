@@ -294,7 +294,6 @@ class Translate extends Element
                 'label' => $module->id,
                 'key' => 'plugins:' . $module->id,
                 'criteria' => [
-//                    'pluginHandle' => $module->getHandle(),
                     'pluginHandle' => $module->getHandle(),
                     'source' => [
                         $module->getBasePath()
@@ -364,6 +363,6 @@ class Translate extends Element
     {
         $site = Craft::$app->getSites()->getSiteById($this->siteId);
 
-        return $site->handle;
+        return $site->language;
     }
 }

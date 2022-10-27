@@ -204,7 +204,7 @@ class Translate extends Component
                     // Apply the Craft Translate
                     $site = Craft::$app->getSites()->getSiteById($query->siteId);
                     //changed $site->language to site handle
-                    $translation = Craft::t($category, $original, null, $site->handle);
+                    $translation = Craft::t($category, $original, null, $site->language);
 
                     $view = Craft::$app->getView();
                     $elementId = ElementHelper::generateSlug($original);
