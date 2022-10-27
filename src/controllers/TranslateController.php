@@ -177,8 +177,7 @@ class TranslateController extends BaseController
         $translations = Craft::$app->request->getRequiredBodyParam('translation');
 
         // Save to translation file
-        //changed $site->language to site handle
-        Translate::getInstance()->translate->set($site->handle, $translations, $translatePath);
+        Translate::getInstance()->translate->set($site->language, $translations, $translatePath);
 
         // Redirect back to page
         return $this->asJson($response);
