@@ -1,4 +1,4 @@
-# Translate for Craft CMS 3.x
+# Translate for Craft CMS 4.x
 
 Translate static string from the Craft control panel
 
@@ -6,7 +6,7 @@ Translate static string from the Craft control panel
 
 ## Requirements
 
-This plugin requires Craft CMS 3.0.0 or later.
+This plugin requires Craft CMS 4.0.0 or later.
 
 ## Installation
 

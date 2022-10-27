@@ -17,7 +17,7 @@ class TranslateQuery extends ElementQuery
 
     // General - Properties
     // =========================================================================
-    public $id;
+    public mixed $id = null;
     public $source;
     public $translateStatus;
     public $pluginHandle;
@@ -41,7 +41,7 @@ class TranslateQuery extends ElementQuery
     /**
      * @inheritdoc
      */
-    public function getStatus()
+    public function getStatus(): array|string|null
     {
         return $this->status;
     }
