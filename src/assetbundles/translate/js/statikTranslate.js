@@ -83,7 +83,7 @@
             var settings = {};
             this.$menu = new Garnish.MenuBtn("#statik-menubtn", settings);
 
-            var $siteMenu = $('.sitemenubtn:first').menubtn().data('menubtn').menu;
+            var $siteMenu = $('.sitemenubtn:first').menubtn().data('menubtn') ? $('.sitemenubtn:first').menubtn().data('menubtn').menu : false;
             var $siteIdInput = $('input[name="siteId"]');
 
             // Upload file on click
@@ -98,9 +98,11 @@
             //$siteIdInput.val(siteId);
 
             // Change the siteId when on hidden values
-            $siteMenu.on('optionselect', function(ev) {
-                $siteIdInput.val($(ev.selectedOption).data('siteId'));
-            });
+            if ($siteMenu) {
+                $siteMenu.on('optionselect', function(ev) {
+                    $siteIdInput.val($(ev.selectedOption).data('siteId'));
+                });
+            }
 
             Craft.elementIndex.on('afterAction', this.manageAfterAction);
             this.$menu.on('optionSelect', this.manageMenu);
