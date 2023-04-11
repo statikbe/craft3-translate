@@ -40,8 +40,7 @@
 
     <form method="post" id="translate-ajax" accept-charset="utf-8" style="display: flex; flex-direction: column; gap: 3rem;">
         {{ csrfInput() }}
-
-        {% set selectedSite = craft.app.request.getQueryParam('site') ? craft.app.sites.getSiteByHandle(craft.app.request.getQueryParam('site')) : craft.app.sites.primarySite %}
+        {% set selectedSite = craft.app.request.getQueryParam('site', null) ? craft.app.sites.getSiteByHandle(craft.app.request.getQueryParam('site')) : craft.app.sites.primarySite %}
         <input type="hidden" name="siteId" value="{{  selectedSite.id }}">
         <input type="hidden" name="action" value="translate/translate/save">
 
