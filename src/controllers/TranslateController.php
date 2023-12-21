@@ -146,7 +146,6 @@ class TranslateController extends BaseController
     public function actionSave(): \yii\web\Response
     {
         $this->requireAcceptsJson();
-
         $response = [
             'success' => true,
             'errors' => []
@@ -177,9 +176,10 @@ class TranslateController extends BaseController
             }
         }
         $translations = Craft::$app->request->getRequiredBodyParam('translation');
+        $translations = reset($translations);
 
         // Save to translation file
-        Translate::getInstance()->translate->set($site->language, $translations, $translatePath);
+        Translate::getInstance()->translate->set($site->language, $translations['translation'], $translatePath);
 
         // Redirect back to page
         return $this->asJson($response);
