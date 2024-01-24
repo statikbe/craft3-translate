@@ -39,9 +39,9 @@ class Translate extends Component
         // Regex for |t('category')
         'twig' => array(
             // Single quotes
-            "/'([^']+)'\|(t|translate)/mu",
+            "/'([^']+)'\ *\|\ *(t|translate)/mu",
             // Double quotes
-            '/"([^"]+)"\|(t|translate)/mu',
+            '/"([^"]+)"\ *\|\ *(t|translate)/mu',
         ),
 
         // Regex for Craft.t('category', '..')
@@ -255,7 +255,7 @@ class Translate extends Component
 
     public function parseString($expression, $string)
     {
-        $string = preg_replace("/\r?\n|\r|\n/", " ",$string);
+        $string = preg_replace("/\r?\n|\r|\n/", " ", $string);
         $string = preg_replace('!\s+!', ' ', $string);
         preg_match_all($expression, $string, $matches);
         return $matches;
