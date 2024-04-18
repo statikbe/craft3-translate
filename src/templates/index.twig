@@ -43,6 +43,7 @@
         {% set selectedSite = craft.app.request.getQueryParam('site', null) ? craft.app.sites.getSiteByHandle(craft.app.request.getQueryParam('site')) : craft.app.sites.primarySite %}
         <input type="hidden" name="siteId" value="{{  selectedSite.id }}">
         <input type="hidden" name="action" value="translate/translate/save">
+        <input type="hidden" name="sourceKey" value="{{ craft.app.request.getParam('source') }}">
 
         {# banner block #}
         <div class="readable tablepanel" data-layout-element="3a81c043-79a2-48d1-ab88-a0d512b7be9f">

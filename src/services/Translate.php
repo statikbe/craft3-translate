@@ -207,10 +207,10 @@ class Translate extends Component
                     $translation = Craft::t($category, $original, [], $site->language);
 
                     $view = Craft::$app->getView();
-                    $elementId = ElementHelper::generateSlug($original);
+                    $slug = ElementHelper::generateSlug($original);
 
                     $field = $view->renderTemplate('_includes/forms/text', [
-                        'id' => $elementId,
+                        'id' => $slug,
                         'name' => 'translation[' . $original . ']',
                         'value' => $translation,
                         'placeholder' => $translation,
@@ -218,7 +218,7 @@ class Translate extends Component
 
                     // Let's create our translate element with all the info
                     $element = new TranslateElement([
-                        'id' => ElementHelper::generateSlug($original),
+                        'id' => $slug,
                         'original' => $original,
                         'translation' => $translation,
                         'source' => $path,

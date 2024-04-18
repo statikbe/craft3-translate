@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## 5.0.0.beta-01 - 2024-04-18
+### Added
+- Craft 5 support
+
 ## 2.1.4 - 2024-01-24
 ### Fixed
 - fixed regex allowing for spaces in twig syntax

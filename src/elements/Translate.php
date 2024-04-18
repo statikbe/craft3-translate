@@ -13,6 +13,7 @@ namespace statikbe\translate\elements;
 use Craft;
 use craft\base\Element;
 use craft\elements\db\ElementQueryInterface;
+use craft\elements\User;
 use craft\helpers\FileHelper;
 use craft\web\ErrorHandler;
 use statikbe\translate\elements\db\TranslateQuery;
@@ -116,13 +117,6 @@ class Translate extends Element
      */
     protected static function defineTableAttributes(): array
     {
-//        $primary = Craft::$app->getSites()->getPrimarySite();
-//        $locale = Craft::$app->getI18n()->getLocaleById($primary->language);
-//        $attributes['original'] = ['label' => Craft::t('translate', 'Source: {region} ({language})', [
-//            'language' => $primary->language,
-//            'region' => $locale->displayName
-//        ])];
-//        $currentSite = Craft::$app->getRequest()->getQueryParam('site');
         $attributes['field'] = ['label' => Craft::t('app', 'Translation')];
         return $attributes;
     }
@@ -161,7 +155,6 @@ class Translate extends Element
             'translation',
             'source',
             'file',
-            //'status',
             'locale'
         ];
     }
@@ -172,99 +165,6 @@ class Translate extends Element
     protected static function defineSources(string $context = null): array
     {
         $sources = [];
-
-        //toonde extra kolom met template status (bolletjes groen/oranje)
-//        $sources[] = ['heading' => Craft::t('translate', 'Template Status')];
-//
-//        $key = 'status:' . self::ALL;
-//        $sources[] = [
-//            'status' => null,
-//            'key' => $key,
-//            'label' => Craft::t('translate', 'All'),
-//            'criteria' => [
-//                'source' => [
-//                    Craft::$app->path->getSiteTemplatesPath()
-//                ],
-//            ],
-//        ];
-//
-//        $key = 'status:' . self::PENDING;
-//        $sources[] = [
-//            'status' => self::PENDING,
-//            'key' => $key,
-//            'label' => Craft::t('translate', 'Pending'),
-//            'criteria' => [
-//                'source' => [
-//                    Craft::$app->path->getSiteTemplatesPath()
-//                ],
-//                'translateStatus' => self::PENDING
-//            ],
-//        ];
-//
-//        $key = 'status:' . self::TRANSLATED;
-//        $sources[] = [
-//            'status' => self::TRANSLATED,
-//            'key' => $key,
-//            'label' => Craft::t('translate', 'Translated'),
-//            'criteria' => [
-//                'source' => [
-//                    Craft::$app->path->getSiteTemplatesPath()
-//                ],
-//                'translateStatus' => self::TRANSLATED
-//            ],
-//        ];
-
-        // Get template sources (toont files in sidebar)
-//        $templateSources = array();
-//        $options = [
-//            'recursive' => false,
-//            'only' => ['*.html', '*.twig', '*.js', '*.json', '*.atom', '*.rss'],
-//            'except' => ['vendor/', 'node_modules/', 'jsPlugins/']
-//        ];
-//
-//        $templates = FileHelper::findFiles(Craft::$app->path->getSiteTemplatesPath(), $options);
-////        $templates = FileHelper::findFiles(Craft::$app->path->getSiteTemplatesPath(), $allTemplates);
-//
-//        foreach ($templates as $template) {
-//            // If matches, get template name
-//            $fileName = basename($template);
-//            // Fixes bug in ElementHelper::findSource in Linux OS
-//            $cleanTemplateKey = str_replace('/', '*', $template);
-//            // Add template source
-//            $templateSources['templatessources:' . $fileName] = [
-//                'label' => $fileName,
-//                'key' => 'templates:' . $cleanTemplateKey,
-//                'criteria' => [
-//                    'source' => [
-//                        $template
-//                    ],
-//                ],
-//            ];
-//        }
-
-        // Maps (toont folders in sidebar)
-//        $options = [
-//            'recursive' => false,
-//            'except' => ['vendor/', 'node_modules/', 'jsPlugins/']
-//        ];
-//        $folders = FileHelper::findDirectories(Craft::$app->path->getSiteTemplatesPath(), $options);
-//
-//        foreach ($folders as $template) {
-//            // If matches, get template name
-//            $fileName = basename($template);
-//            // Fixes bug in ElementHelper::findSource in Linux OS
-//            $cleanTemplateKey = str_replace('/', '*', $template);
-//            // Add template source
-//            $templateSources['templatessources:' . $fileName] = [
-//                'label' => $fileName . '/',
-//                'key' => 'templates:' . $cleanTemplateKey,
-//                'criteria' => [
-//                    'source' => [
-//                        $template
-//                    ],
-//                ],
-//            ];
-//        }
 
         $sources[] = ['heading' => Craft::t('translate', 'Default')];
 
@@ -290,7 +190,7 @@ class Translate extends Element
 
             //was vroeger $modulesources (om plugin mapje te maken met eronder de plugins, nu enkel balkje per plugin)
 //            $sources['plugins:' . $path] = [
-                $modulesSources['plugins:' . $path] = [
+            $modulesSources['plugins:' . $path] = [
                 'label' => $module->id,
                 'key' => 'plugins:' . $module->id,
                 'criteria' => [
@@ -318,10 +218,30 @@ class Translate extends Element
         return $sources;
     }
 
+    public function canSave(User $user): bool
+    {
+        return true;
+    }
+
+    public function getInlineAttributeInputHtml(string $attribute): string
+    {
+        return $this->field;
+    }
+
+
     /**
      * @inheritdoc
      */
-    public static function indexHtml(ElementQueryInterface $elementQuery, array $disabledElementIds = null, array $viewState, string $sourceKey = null, string $context = null, bool $includeContainer, bool $showCheckboxes): string
+    public static function indexHtml(
+        ElementQueryInterface $elementQuery,
+        array                 $disabledElementIds = null,
+        array                 $viewState,
+        string                $sourceKey = null,
+        string                $context = null,
+        bool                  $includeContainer,
+        bool                  $showCheckboxes,
+        bool                  $sortable
+    ): string
     {
         // just 1 locale enabled
         if (empty($elementQuery->siteId)) {
@@ -329,20 +249,25 @@ class Translate extends Element
             $elementQuery->siteId = $primarySite->id;
         }
 
-        if ($elementQuery->translateStatus) {
-            $elementQuery->status = $elementQuery->translateStatus;
-        }
+
+        $elementQuery->status = null;
         $elements = TranslatePlugin::getInstance()->translate->get($elementQuery);
 
         $variables = [
             'viewMode' => $viewState['mode'],
             'context' => $context,
-            'disabledElementIds' => $disabledElementIds,
+            'inputNameSpace' => 'translation',
+            'nestedInputNamespace' => 'translation',
+            'disabledElementIds' => [],
             'attributes' => Craft::$app->getElementSources()->getTableAttributes(static::class, $sourceKey),
             'elements' => $elements,
             'sourceKey' => $sourceKey,
-            'includeContainer' => $includeContainer,
+            'includeContainer' => false,
             'showCheckboxes' => false,
+            'selectable' => false,
+            'sortable' => false,
+            'showHeaderColumn' => true,
+            'inlineEditing' => true,
         ];
 
         // Better UI
@@ -351,9 +276,7 @@ class Translate extends Element
         Craft::$app->view->registerJs("$('.filter-btn').addClass('hidden');");
         Craft::$app->view->registerJs("$('.btn.statusmenubtn').addClass('hidden');");
 
-        $template = '_elements/' . $viewState['mode'] . 'view/' . ($includeContainer ? 'container' : 'elements');
-
-        return Craft::$app->view->renderTemplate($template, $variables);
+        return Craft::$app->view->renderTemplate("_elements/tableview/container", $variables);
     }
 
     /**
